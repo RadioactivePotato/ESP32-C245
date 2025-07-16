@@ -1,111 +1,99 @@
-# ESP32-C245无线烙铁
+# ESP32-C245 Wireless Soldering Iron
 
-#### 项目说明
-ESP32-C245无线烙铁是一款便携自带锂电池供电的无线式电烙铁  使用C245发热芯  支持TYPE-C 快充直接供电和给锂电池充电  支持烙铁温度  电流 电压 功率 等参数的实时测量和显示  
+#### Project Description
+ESP32-C245 Wireless Soldering Iron is a portable wireless electric soldering iron powered by lithium battery. It uses C245 heating core, supports TYPE-C fast charging to directly power and charge lithium battery, supports real-time measurement and display of parameters such as soldering iron temperature, current, voltage, power, etc.
 
- 
+#### Function Introduction
+1. Supports -100℃ ~ 450℃ temperature range measurement and temperature calibration function
+2. Supports lithium battery power supply and TYPE-C dual power supply, automatically switches power supply and charges lithium battery
+3. TYPE-C input power: 5~20V/5A PD fast charging deception power default: 65W
+4. TYPE-C interface supports program download and fast charging deception power supply (through positive and reverse plug-in distinction function)
+5. 3 common buttons for mode switching and parameter setting 1 reset button for burning program
+6. ST7735 0.96 inch 160*80 pixel color LCD display to display various parameters
+7. Support multiple function settings, save data when powered off, low power sleep 20uA and button wake-up
+8. When powered by lithium battery, the maximum heating power is 20W, the heating speed is slightly slower, welding above 350℃ is more difficult, and the battery life is also relatively tight
+9. When powered by TYPE-C, the maximum available heating power is 99W, and the current limit is adjustable
 
-#### 功能简介
-1.  支持-100℃ ~ 450℃温度范围测量和温度校准功能
-2.  支持锂电池供电和TYPE-C双电源供电   自动切换供电并给锂电池充电
-3.  TYPE-C 输入电源：5~20V/5A    PD快充诱骗功率默认: 65W
-4.  TYPE-C 接口支持程序下载和快充诱骗供电（通过正反插区分功能）
-5.  3个常用按键进行模式切换和参数设置  1个复位按键用于烧录程序
-6.  ST7735 0.96寸   160*80 像素 彩色液晶显示屏 显示各种参数 
-7.  支持多种功能设置  掉电保存数据   低功耗休眠20uA和按键唤醒
-8.  锂电池供电时最大加热功率20W  加热速度略慢  350℃ 以上焊接比较吃力  续航也比较紧
-9.  TYPE-C供电时最大可用加热功率99W  限流可调 
+#### Project information
+1. In August 2023, the schematic diagram, PCB design, proofing and verification function of ESP32 wireless soldering iron 1.0 were carried out
+2. In September 2023, the schematic diagram, PCB design, proofing and verification function of ESP32 wireless soldering iron 1.1 were carried out
+3. In October 2023, the shell structure design of ESP32 wireless soldering iron 1.1 was carried out and proofing was done by LiChuang 3D
+4. In November 2023, the code was officially written and tested Solve some bugs and improve the hardware, software and structural shell design
+5. The project has a total of 2 iterations, and it cost more than 600 yuan to make PCB proofing, shell 3D proofing and purchase components
+6. This project is the first public, and it is an original CC BY-SA 4.0 open source project of Negative Entropy Light
+7. LiChuang open source platform link: https://oshwhub.com/fj956391150/ESP32-wu-xian-lao-tie
+8. Negative Entropy Light 2023-11-22
 
+#### Design principle
+1. This project uses ESP32-S3FN8 as the main control, and uses ADC to collect the soldering iron thermocouple temperature signal and current signal to control the PWM drive PMOS switch to control the soldering iron temperature and heating power
+2. The HUSB238-002D chip is used for fast charging deception, but this chip does not support the fast charging protocol very well, and cannot deceive some chargers to output
+3. TPS61088RHLR is used to boost the battery voltage of about 3.7V to 8V to power the soldering iron to increase the heating power
+4. XB7608AJ is used to provide overvoltage, undervoltage, overcurrent, short circuit and other protection functions for lithium batteries. SLM6305 is used to charge lithium batteries
+5. LIS3DHTR is used for motion detection to determine whether to enter deep sleep mode
+6. GS8552 amplifier is used to amplify the soldering iron thermocouple temperature signal and current signal
+7. Affected by the low-end current sampling circuit, the current will affect the soldering iron thermocouple temperature signal during operation. Therefore, intermittent sampling of thermocouple temperature signals is adopted and the temperature is obtained by table lookup
 
-#### 项目信息
-1.  2023年8月   进行ESP32无线烙铁1.0的 原理图 PCB设计 打样和验证功能
-2.  2023年9月   进行ESP32无线烙铁1.1的 原理图 PCB设计 打样和验证功能
-3.  2023年10月 进行ESP32无线烙铁1.1的外壳结构设计并去立创3D打样
-4.  2023年11月正式开始写代码和进行测试 解决部分BUG及完善软硬件和结构外壳设计
-5.  该项目前后一共迭代了2个版本 花费了600多元 进行PCB打样 外壳3D打样和购买元器件 
-6.  本项目首次公开，为负熵生之光本人原创 CC BY-SA 4.0  开源项目
-7.  立创开源平台链接：https://oshwhub.com/fj956391150/ESP32-wu-xian-lao-tie
-8.  负熵生之光 2023-11-22
+#### Function mode button
+1. Constant temperature heating mode: short press K1 to switch between standby and working modes. Long press K1 to enter deep sleep mode. Short press K2 K3 to set the target temperature. Long press K2 K3 to switch between different modes
+2. Function setting mode: short press K1 to switch between different function settings Long press K1 to enter and exit a more detailed parameter setting interface. Short press K2 K3 to turn the function on or off and set parameters plus or minus.
+3. Calibration setting mode: Short press K1 to switch different calibration parameters. Long press K1 to enter and exit a more detailed parameter setting interface. Short press K2 K2 to subtract or add parameters and set them on or off.
+4. Deep sleep mode: Short press K1 in deep sleep mode to wake up and enter the constant temperature heating mode interface. Long press K1 in the constant temperature heating mode interface to enter deep sleep mode.
+#### Constant temperature heating mode
+1. Short press K1 to switch between standby and working modes. Short press K2 K3 to set the target temperature. Long press K2 K3 to switch between different modes.
+2. In standby mode, only measure the soldering iron temperature without heating. It can be used as a thermometer.
+3. In operation, measure the soldering iron temperature and heat the soldering iron temperature to the set target temperature.
+4. Set the target temperature range: -99℃~450℃
+5. Soldering iron temperature measurement range: -200℃~450℃. The range and accuracy are affected by temperature calibration parameters.
+6. When no movement is detected, the sleep time for entering deep sleep mode will be counted. When movement is detected, the timer will be reset.
+7. When the lithium battery voltage is detected to be lower than 3.2V, it will enter deep sleep mode.
 
+#### Function setting mode
+1. Short press K1 to switch different function settings. Long press K1 to enter and exit a more detailed parameter setting interface. Short press K2 K3 to turn the function on or off, and add or subtract parameters.
+2. Maximum current setting: Set the maximum heating current under different supply voltages to prevent excessive current from pulling the power supply.
+3. Working mode setting: Default standard heating mode. Intelligent heating mode will automatically +50℃ for welding when a large solder joint is detected. It is not perfect at present.
+4. Motion detection setting: Set the acceleration detection threshold.
+5. Sleep time setting: Set the sleep timer from 1 to 60 minutes. Enter deep sleep mode after exceeding the time.
+6. Screen orientation setting: By short pressing K2 K3 key to set screen direction
+7. Auxiliary lighting setting: Set LED auxiliary lighting switch
+8. Buzzer switch setting: Set whether the buzzer prompt tone is on or off
+9. Restore default settings: Set parameter to 1 to restore the default values of all parameters and save
 
-#### 设计原理
-1.  该项目采用ESP32-S3FN8 作为主控 通过ADC采集烙铁热电偶温度信号和电流信号来控制PWM驱动PMOS开关来控制烙铁温度和加热功率 
-2.  HUSB238-002D芯片用于快充诱骗  不过这颗芯片对快充协议的支持性不是很好  无法诱骗某些充电器输出  
-3.  TPS61088RHLR用于把3.7V左右的电池电压升压至8V给烙铁供电 来提升加热功率 
-4.  XB7608AJ用于给锂电池提供过压 欠压  过流 短路等保护功能   SLM6305  用于锂电池充电
-5.  LIS3DHTR用于运动检测  判断是否进入深度睡眠模式
-6.  GS8552放大器  用于放大烙铁热电偶温度信号和电流信号
-7.  受低端电流采样电路影响 导致工作时电流会影响烙铁热电偶温度信号 因此采用间歇性采样热电偶温度信号 并通过查表来获取温度
- 
+#### Calibration setting mode
+1. Short press K1 key to switch different calibration parameters. Long press K1 key to enter and exit more detailed parameter setting interface. Short press K2 K2 to subtract or add parameters, turn on or off settings
+2. Use an external accurate thermometer to measure the actual temperature of the soldering iron to adjust the set temperature value. Let the soldering iron be constant at the temperature to be calibrated and then press the calibration switch to save the corresponding soldering iron thermocouple voltage
+3. When calibrating the voltage, the default calibration starts from 0℃. Put the soldering iron tip in the ice water mixture. Calibrate after a while and then calibrate step by step. 500℃ may exceed the range
+4. It is best to use a professional thermometer for temperature calibration. The multimeter is unreliable. Calibration parameters below 0℃ are not calibrated under the conditions. The theoretical calculated value is written
+5. The default calibration parameters are calibrated by a multimeter, which is not very accurate. The voltage of the soldering iron thermocouple of different manufacturers is likely to be different. Calibration is required before use.
+6. In order to support the measurement of the temperature range of -100℃ ~ 450℃, the measurement accuracy of 0~ 450℃ is sacrificed.
 
-#### 功能模式按键
-1.  恒温加热模式：短按K1键来切换待机和工作模式 长按K1键进入深度睡眠模式  短按K2  K3键对设定目标温度  同时长按K2  K3键切换不同模式
-2.  功能设置模式：短按K1键切换不同的功能设置 长按K1键进入和退出更详细的参数设置界面  短按K2  K3键对 功能进行开或关 参数加或减设置  
-3.  校准设置模式：短按K1键切换不同的校准参数 长按K1键进入和退出更详细的参数设置界面  短按K2  K2进对参数进行减或加 开或关设置
-4.  深度睡眠模式：深度睡眠模式短按K1键 唤醒进入恒温加热模式界面  在恒温加热模式界面长按K1键进入进入深度睡眠模式
+#### Software Description
+1. This program is developed based on Arduino IDE. The source program, dependent libraries and compiled burning files are in the attachment. Xiaobai recommends using the ESP official tool for burning.
+2. Download and burn through the ESP official tool. You need to install esp32 flash_download_tool_3.9.5, call in the burning bin file, configure the corresponding parameters, download and restart.
+3. Compile and download through Arduino IDE. You need to install esp32 development board and related libraries and select the corresponding chip parameter configuration. Installation package version: esp32_package_2.0.14
+4. When the chip downloads the program for the first time, if there is no USB device, change the plug. If the USB does not recognize it, you need to pull down the P0 pin (press the K3 key) Then press the reset button to enter the forced download mode
+5. After the forced download mode is successfully burned, you need to press the reset button to restart the program. If the screen does not display, press the button to see if there is a response. If there is a response, the screen does not light up. Enter the deep sleep mode and wake up.
+6. If there is no response after the burning is successful, the screen does not display a black screen, etc., focus on checking the hardware welding and download parameter configuration. If there is an abnormal situation, you can re-burn the program.
 
-#### 恒温加热模式
-1.  通过短按K1键来切换待机和工作模式   短按K2  K3键对设定目标温度 同时长按K2  K3键切换不同模式
-2.  待机中时 只测量烙铁温度 不进行加热  可以当温度计用
-3.  工作中时 测量烙铁温度 并把烙铁温度加热恒温至设定目标温度 
-4.  设定目标温度范围：  -99℃~450℃      
-5.  烙铁温度测量范围：-200℃~450℃     受温度校准参数影响范围和精度
-6.  当没有检测到任何运动时 开始进行进入深度睡眠模式的休眠时间计时  检测到运动重置计时
-7.  当检测到锂电池电压低于3.2V时将进入深度睡眠模式  
- 
+#### Hardware assembly
+1. EESP32-C245 wireless soldering iron consists of: main control PCBA + adapter board PCBA + lithium battery + shell + C245 soldering iron core
+2. The main control PCB and adapter board PCB use ordinary RF-4 material 2-layer board with a thickness of 0.8mm. The two boards are welded together through the pin header. Pay attention to the direction not to weld in reverse
+3. The adapter board PCBA needs to be welded with 3 types of beryllium bronze crown springs O4.5-8mm / K10#-8 / K16#-6 each. See the picture for details Note that ventilated beryllium bronze welding is toxic
+4. The shell is designed using SOLIDWORKS 2021. There are two similar solutions, large and small, which can be used interchangeably. There is only a slight difference in appearance. You can choose any one to use
+5. The lithium battery is recommended to use R&F 782768SV aircraft model battery cell with a capacity of 1750mAh, length 68*width 27*height 7.2mm. See the picture for details. As long as the parameters are suitable, other models can also be used
+6. TFT uses ST7735 0.96-inch 160*80 pixel color LCD display screen, welding type 13PIN interface. Note that ST7735 must be used. ST7735S may not display
+7. The C245 soldering iron core uses the C245-SK small knife head soldering iron core of Sugong
 
-#### 功能设置模式
-1.  短按K1键切换不同的功能设置 长按K1键进入和退出更详细的参数设置界面  短按K2  K3键对 功能进行1开或0关 参数加或减   
-2.  最大电流设置:  设置不同供电电压下的最大加热电流 以防止电流过大拉跨电源   
-3.  工作模式设置:  默认标准加热模式  智能加热模式检测到大焊点会自动+50℃ 进行焊接 目前不太完善
-4.  运动检测设置:  设置加速度检测阈值  
-5.  休眠时间设置:  设置1~60分钟的休眠计时 超过时间进入深度睡眠模式
-6.  屏幕方向设置:  通过短按K2 K3键进对屏幕方向进行设置
-7.  辅助照明设置:  设置LED辅助照明开关
-8.  蜂鸣开关设置:  设置蜂鸣器提示音是否开关 
-9.  恢复默认设置:  参数置1  恢复所有参数的默认值并保存
+#### Notes
+1. This project is a CC BY-SA 4.0 open source project. If you need large-scale commercial use, you must find the original author for authorization
+2. This project uses a large number of 0402 package components, which is difficult to hand solder Or use Jiali Chuang SMT. The project is more difficult, so please do your best to reproduce it.
+3. When welding the model aircraft battery, it is recommended to discharge the voltage to 3.3V before welding. Do not weld the positive and negative poles in reverse, otherwise magic smoke will be released.
+4. For 3D printed shells, try to use materials with high printing precision for large shells and high temperature resistant materials for small shells close to the heating end.
+5. Some parameters may be abnormal for the first use. It is recommended to restore the default settings.
+6. Abnormal software control of PWM drive constant current function will cause excessive current to pull down the power supply. Try to use a high-power power supply to avoid this problem.
+7. When welding high-temperature large pads, the maximum 20W heating power of the lithium battery may not be enough. It is recommended to use a high-power power supply.
+8. The component parameters are based on the schematic diagram. If it is not available in Lichuang Mall, go to Taobao. The relevant software and hardware information are in the attachment. The schematic diagram has relevant information.
+9. This project is only a personal DIY project. It has not been professionally evaluated and tested. There may be hidden bugs. It is not perfect yet. Be cautious in reproducing and using it. Risks are borne by yourself.
 
-
-#### 校准设置模式
-1.  短按K1键切换不同的校准参数 长按K1键进入和退出更详细的参数设置界面   短按K2  K2进对参数进行减或加 开或关设置
-2.  通过外部精准的温度计测量烙铁的真实温度来调整设定温度值让烙铁恒温到要校准的温度值然后按下校准开关来保存对应的烙铁热电偶电压
-3.  校准电压时默认从0℃ 开始校准  把烙铁头放入冰水混合物中 一会后校准  然后逐级校准   500℃可能会超量程
-4.  温度校准最好用专业的温度计 万用表的那种不靠谱   0℃以下校准参数 没条件校准 写的是理论计算值
-5.  默认的校准参数是用万用表校准的 不太准 不同厂家的烙铁热电偶电压大概率不同使用前需要校准一遍
-6.  为了支持-100℃ ~ 450℃温度范围测量 0~ 450℃测量精度有所牺牲  
-
- 
-#### 软件说明
-1.  此程序基于Arduino IDE开发  源程序和依赖库及 编译好的烧录文件在附件内    小白建议用ESP官方工具烧录
-2.  通过ESP官方工具烧录下载烧录 需要安装esp32 flash_download_tool_3.9.5  调入烧录bin文件  配置对应参数下载重启即可   
-3.  通过Arduino IDE编译下载烧录 需要安装esp32 开发板和相关库 及选择对应的芯片参数配置  安装包版本：esp32_package_2.0.14 
-4.  芯片初次下载程序时 没有USB设备就换一面插头 如果USB不会识别  需要要拉低P0引脚（按下K3键） 然后按下复位按键进入强制下载模式
-5.  强制下载模式烧录成功后需要按下复位按键重启运行程序  屏幕不显示按下按键看有无反应  有反应屏幕不亮进入深度睡眠模式后唤醒试试
-6.  如果烧录成功后出现 没反应 屏幕不显示黑屏  等现象 重点检查硬件焊接和下载参数配置   如果出现异常状况 可重新烧录程序试试
-
- 
-#### 硬件装配
-1.  EESP32-C245无线烙铁由: 主控PCBA + 转接板PCBA + 锂电池 + 外壳 + C245烙铁芯 组成 
-2.  主控PCB和转接板PCB 使用普通RF-4材质  2层板  板厚0.8mm    两块板子通过排针焊接在一起 注意方向别焊反
-3.  转接板PCBA需要焊上3种铍青铜冠簧  O4.5-8mm / K10#-8 / K16#-6   各一个 详细信息看图   注意通风铍青铜焊接有毒
-4.  外壳使用SOLIDWORKS 2021 设计 有两套相似的方案组成 分大外壳和小外壳  能通用 只是外形有一点区别 任选一套使用即可  
-5.  锂电池推荐使用 富力782768SV航模电芯 容量1750mAh  长68*宽27*高7.2mm 详细信息看图    只要参数合适其它型号也能用
-6.  TFT使用 ST7735   0.96寸  160*80 像素彩色液晶显示屏  焊接式13PIN接口  注意必须用ST7735的  ST7735S可能不显示
-7.  C245烙铁芯使用的是速工的 C245-SK小刀头烙铁芯
- 
-
-#### 注意事项
-1.  此项目为 CC BY-SA 4.0 开源项目 如需大批量商用必需找原作者进行授权 
-2.  此项目大量使用0402封装元件 手焊难度较大  或者使用嘉立创SMT   项目难度较高复刻量力而行    
-3.  航模电芯焊接时建议把电压放电至3.3V再焊接  正负极千万不要焊反  否则会释放魔法烟雾
-4.  3D打印外壳  大壳尽量选用打印精度高的材料  靠近发热端的小壳 尽量选用耐高温的材料  
-5.  初次使用可能有些参数不正常  建议进行恢复默认设置操作一下 
-6.  软件控制PWM驱动恒流功能异常会导致电流过高拉垮电源  尽量选用大功率的电源来避免这个问题
-7.  进行高温大焊盘焊接时 锂电池供电的最大20W加热功率可能不够用  建议使用大功率电源供电
-8.  元件参数以原理图为准 立创商城没有的上淘宝   相关软硬件资料都在附件内   原理图有备注相关信息
-9.  该项目仅为个人DIY项目 没经过专业的评估和测试  可能有隐藏BUG  还不是很完善 谨慎复刻和使用  风险自行承担
- 
-
-#### 实物展示
-![输入图片说明](img/B.jpg)
-![输入图片说明](img/A.jpg)
+#### Physical display
+![Enter image description](img/B.jpg)
+![Enter image description](img/A.jpg)
